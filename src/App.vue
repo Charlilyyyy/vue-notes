@@ -129,35 +129,42 @@ header button{
 </style>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
-const openModal = ref(false)
+const openModal = ref(false);
+const newNote = ref("");
+const notes = ref([]);
 
-const newNote = ref("")
-
-const notes = ref([])
-
-const lightColor= () => {
-  let color = 'hsl('+Math.floor(Math.random()*361)+',50%,75%)';
-  return color
-}
+const lightColor = () => {
+  let color = 'hsl(' + Math.floor(Math.random() * 361) + ',50%,75%)';
+  return color;
+};
 
 const addNote = () => {
-
-  if(newNote.value.length > 0){
-      notes.value.push({
-        id: Math.floor(Math.random()*1000000),
-        text: newNote.value,
-        date: new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }),
-        backgroundColor: lightColor()
-    })
+  if (newNote.value.length > 0) {
+    notes.value.push({
+      id: Math.floor(Math.random() * 1000000),
+      text: newNote.value,
+      date: new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }),
+      backgroundColor: lightColor(),
+    });
+    saveNotesToLocalStorage();
   }
 
-  openModal.value = false
-  newNote.value = ""
-}
+  openModal.value = false;
+  newNote.value = "";
+};
 
+const saveNotesToLocalStorage = () => {
+  localStorage.setItem('notes', JSON.stringify(notes.value));
+};
 
+const loadNotesFromLocalStorage = () => {
+  const storedNotes = localStorage.getItem('notes');
+  notes.value = storedNotes ? JSON.parse(storedNotes) : [];
+};
 
-
+onMounted(() => {
+  loadNotesFromLocalStorage();
+});
 </script>
