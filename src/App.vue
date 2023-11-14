@@ -1,25 +1,28 @@
 <template>
   <main>
-    <div style="display: none;" class="overlay">
+    <div v-if="openModal"  class="overlay">
       <div class="modal">
-        <textarea name="note" id="note" cols="30" rows="10"></textarea>
-        <button>Add Note</button>
-        <button class="close">Close</button>
+        <textarea v-model="newNote" name="note" id="note" cols="30" rows="10"></textarea>
+        <button @click="addNote()">Add Note</button>
+        <button @click="openModal = false" class="close">Close</button>
+        <!-- {{ newNote }} -->
       </div>
     </div>
     <div class="container">
       <header>
+        <!-- {{ notes }} -->
         <h1>Notes</h1>
-        <button>+</button>
+        <button @click="openModal = true">+</button>
       </header>
       <div class="cards-container">
-         <div class="card">
-          <p class="main-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cum porro, recusandae adipisci suscipit cumque rerum.</p>
-          <p class="date">22/10/2023</p>
+         <div v-for="note in notes" :key="note.id" :style="{ backgroundColor: note.backgroundColor }" class="card">
+          <p class="main-text">{{ note.text }}</p>
+          <p class="date">{{ note.date }}</p>
          </div>
       </div>
     </div>
   </main>
+  
 </template>
 
 <style scoped>
@@ -124,3 +127,37 @@ header button{
 }
 
 </style>
+
+<script setup>
+import { ref } from 'vue';
+
+const openModal = ref(false)
+
+const newNote = ref("")
+
+const notes = ref([])
+
+const lightColor= () => {
+  let color = 'hsl('+Math.floor(Math.random()*361)+',50%,75%)';
+  return color
+}
+
+const addNote = () => {
+
+  if(newNote.value.length > 0){
+      notes.value.push({
+        id: Math.floor(Math.random()*1000000),
+        text: newNote.value,
+        date: new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }),
+        backgroundColor: lightColor()
+    })
+  }
+
+  openModal.value = false
+  newNote.value = ""
+}
+
+
+
+
+</script>
